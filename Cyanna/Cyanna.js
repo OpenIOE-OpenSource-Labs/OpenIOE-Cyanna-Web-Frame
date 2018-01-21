@@ -235,22 +235,38 @@ var Cyanna = {
 
 		};
 
-		Cyanna.loadCss = function(url) {
+		Cyanna.loadCss = function(url,callback) {
+
 			if(url != undefined) {
 				url = this.root +  url;
-				var cssTag = document.getElementById('loadCss');
-				var head = document.getElementsByTagName('head').item(0);
-				if(cssTag) head.removeChild(cssTag);
+				
 				css = document.createElement('link');
-				css.href = url;
-				css.rel = 'stylesheet';
 				css.type = 'text/css';
-				css.id = 'loadCss';
+				css.rel = 'stylesheet';
+
+				if(css.readyState) {
+					css.onreadystatechange = function() {
+						if(css.readyState == "loaded" || css.readyState == "complete") {
+							css.onreadystatechange = null;
+							if(typeof callback === "function") {
+								callback && callback();
+							}
+						}
+					};
+				} else {
+					css.onload = function() {
+						if(typeof callback === "function") {
+							callback && callback();
+						}
+					};
+				}
+				
+				css.href = url;
 				head.appendChild(css);
 			}
 		};
 
-		Cyanna.loadCurrentCss = function(url) {
+		Cyanna.loadCurrentCss = function(url,callback) {
 			if(url != undefined) {
 
 				var urls = Url.createNew();
@@ -263,50 +279,101 @@ var Cyanna = {
 					return;
 				}
 
-				var cssTag = document.getElementById('loadCss');
-				var head = document.getElementsByTagName('head').item(0);
-				if(cssTag) head.removeChild(cssTag);
 				css = document.createElement('link');
-				css.href = url;
-				css.rel = 'stylesheet';
 				css.type = 'text/css';
-				css.id = 'loadCss';
+				css.rel = 'stylesheet';
+
+				if(css.readyState) {
+					css.onreadystatechange = function() {
+						if(css.readyState == "loaded" || css.readyState == "complete") {
+							css.onreadystatechange = null;
+							if(typeof callback === "function") {
+								callback && callback();
+							}
+						}
+					};
+				} else {
+					css.onload = function() {
+						if(typeof callback === "function") {
+							callback && callback();
+						}
+					};
+				}
+				
+				css.href = url;
 				head.appendChild(css);
 			}
 		};
 
-		Cyanna.loadExtCss = function(url) {
+		Cyanna.loadExtCss = function(url,callback) {
 
 			if(url != undefined) {
-				var cssTag = document.getElementById('loadCss');
-				var head = document.getElementsByTagName('head').item(0);
-				if(cssTag) head.removeChild(cssTag);
-				css = document.createElement('link');
-				css.href = url;
+
+				var css = document.createElement('link');
+				
 				css.rel = 'stylesheet';
 				css.type = 'text/css';
-				css.id = 'loadCss';
+
+				if(css.readyState) {
+					css.onreadystatechange = function() {
+						if(css.readyState == "loaded" || css.readyState == "complete") {
+							css.onreadystatechange = null;
+
+							if(typeof callback === "function") {
+								callback && callback();
+							}
+
+						}
+					};
+				} else {
+					css.onload = function() {
+						if(typeof callback === "function") {
+							callback && callback();
+						}
+					};
+				}
+				
+				css.href = url;
 				head.appendChild(css);
 			}
 		};
 
-		Cyanna.loadCssArray = function(cssArray) {
-			var i;
-			if(cssArray.length > 0) {
-				i = 0;
-				for(i = 0; i < cssArray.length; i++) {
-					this.loadCss(cssArray[i]);
+		Cyanna.loadCssArray = function(cssArray,callback) {
+			
+			
+
+			function cssRecurse(self, count, callback) {
+
+				if(count == cssArray.length) {
+					callback && callback();
+				} else {
+					self.loadCss(cssArray[count], function() {
+						cssRecurse(self, ++count, callback);
+					});
 				}
 			}
+
+			cssRecurse(this, 0, callback);
+
 		};
 
-		Cyanna.loadExtCssArray = function(cssArray) {
-			if(cssArray.length > 0) {
-				i = 0;
-				for(i = 0; i < cssArray.length; i++) {
-					this.loadExtCss(cssArray[i]);
+		Cyanna.loadExtCssArray = function(cssArray,callback) {
+			
+
+
+			function cssRecurse(self, count, callback) {
+
+				if(count == cssArray.length) {
+					callback && callback();
+				} else {
+					self.loadExtCss(cssArray[count], function() {
+						cssRecurse(self, ++count, callback);
+					});
 				}
 			}
+
+			cssRecurse(this, 0, callback);
+
 		};
 
 		Cyanna.loadJsArray = function(jsArray, callback) {
@@ -347,7 +414,7 @@ var Cyanna = {
 
 }
 var CYANNA = Cyanna.createNew();
-CYANNA.setRoot("http://127.0.0.1:8020/OpenIOE-Web-Frame/");
+CYANNA.setRoot("http://127.0.0.1:8020/OpenIOE官网/OpenIOE/service/");
 
 CYANNA.loadJsArray(["Cyanna/Config.js", "Cyanna/Plug/Url/Url.js"], function() {
 
@@ -365,13 +432,15 @@ CYANNA.loadJsArray(["Cyanna/Config.js", "Cyanna/Plug/Url/Url.js"], function() {
 	CYANNA.setSameCssState(config.loadSameCssState);
 	CYANNA.setLogState(config.logState);
 
-	if(config.loadSameJsState == true) {
-		jsExtArray.push(urls.protocol() + '//' + urls.path() + urls.nameNoSuffix() + '.js');
-	}
 
 	if(config.loadSameCssState == true) {
 		cssExtArray.push(urls.protocol() + '//' + urls.path() + urls.nameNoSuffix() + '.css');
 	}
+	
+	if(config.loadSameJsState == true) {
+		jsExtArray.push(urls.protocol() + '//' + urls.path() + urls.nameNoSuffix() + '.js');
+	}
+
 
 	CYANNA.loadCssArray(cssArray);
 	CYANNA.loadJsArray(jsArray);

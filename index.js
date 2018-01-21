@@ -1,11 +1,11 @@
 CYANNA.ready(function() {
 
-   // CYANNA.loadCurrentCss("index.css");
-   // CYANNA.loadCurrentScript("test.js");
-    
-   // CYANNA.loadExtCss("http://www.celerstar.com/static/uikit-doc/vendor/highlight/highlight.css");
-   // CYANNA.loadExtScript("http://www.celerstar.com/static/jquery/jquery-3.1.0.min.js");
-    
+	// CYANNA.loadCurrentCss("index.css");
+	// CYANNA.loadCurrentScript("test.js");
+
+	// CYANNA.loadExtCss("http://www.celerstar.com/static/uikit-doc/vendor/highlight/highlight.css");
+	// CYANNA.loadExtScript("http://www.celerstar.com/static/jquery/jquery-3.1.0.min.js");
+
 	CYANNA.log("Page/index.js");
 
 	CYANNA.routes({
@@ -36,7 +36,7 @@ CYANNA.ready(function() {
 			"ISTR": "inq"
 		},
 
-        data:123,
+		data: 123,
 		success: function(res) {
 			CYANNA.log(res);
 		},
