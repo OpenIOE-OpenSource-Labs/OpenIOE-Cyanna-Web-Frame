@@ -38,7 +38,7 @@ var Cyanna = {
 				CYANNA.error("Cyanna.routesFile no ISTR");
 				return;
 			}
-			CYANNA.loadScript("Cyanna/Link/" + LINK + "Link.js", function() {
+			CYANNA.loadJs("Cyanna/Link/" + LINK + "Link.js", function() {
 
 				var linkFileName = LINK + "Link";
 				var link = eval(linkFileName).createNew();
@@ -70,7 +70,7 @@ var Cyanna = {
 				CYANNA.error("Cyanna.routesFile no ISTR");
 				return;
 			}
-			CYANNA.loadScript("Cyanna/"+FILE, function() {
+			CYANNA.loadJs("Cyanna/" + FILE, function() {
 
 				var linkFileName = NAME;
 				var link = eval(linkFileName).createNew();
@@ -113,14 +113,6 @@ var Cyanna = {
 
 		};
 
-		Cyanna.info = function(obj) {
-			if(this.logState == true) {
-
-				console.info("%cCyanna:" + obj, "color:blue;");
-			}
-
-		};
-
 		Cyanna.warn = function(obj) {
 			if(this.logState == true) {
 				console.warn("%cCyanna:" + obj, "color:GoldenRod;");
@@ -142,7 +134,7 @@ var Cyanna = {
 			this.loadSameCssState = state;
 		};
 
-		Cyanna.loadScript = function(url, callback) {
+		Cyanna.loadJs = function(url, callback) {
 
 			if(url != undefined) {
 				url = this.root + url;
@@ -165,13 +157,14 @@ var Cyanna = {
 							callback && callback();
 						}
 					};
+
 				}
 				script.src = url;
 				document.body.appendChild(script);
 			}
 		};
 
-		Cyanna.loadCurrentScript = function(url, callback) {
+		Cyanna.loadCurrentJs = function(url, callback) {
 
 			if(url != undefined) {
 				var urls = Url.createNew();
@@ -179,7 +172,7 @@ var Cyanna = {
 				url = urls.protocol() + '//' + urls.path() + url;
 
 				if(url == nowUrl && this.loadSameJsState) {
-					this.warn("Reload currentScript file.");
+					this.warn("Reload currentJs file.");
 					return;
 				}
 				var script = document.createElement("script");
@@ -203,7 +196,7 @@ var Cyanna = {
 
 		};
 
-		Cyanna.loadExtScript = function(url, callback) {
+		Cyanna.loadExtJs = function(url, callback) {
 
 			if(url != undefined) {
 
@@ -227,6 +220,7 @@ var Cyanna = {
 							callback && callback();
 						}
 					};
+
 				}
 				script.src = url;
 				document.body.appendChild(script);
@@ -235,11 +229,11 @@ var Cyanna = {
 
 		};
 
-		Cyanna.loadCss = function(url,callback) {
+		Cyanna.loadCss = function(url, callback) {
 
 			if(url != undefined) {
-				url = this.root +  url;
-				
+				url = this.root + url;
+
 				css = document.createElement('link');
 				css.type = 'text/css';
 				css.rel = 'stylesheet';
@@ -260,13 +254,14 @@ var Cyanna = {
 						}
 					};
 				}
-				
+
 				css.href = url;
+				var head = document.getElementsByTagName('head').item(0);
 				head.appendChild(css);
 			}
 		};
 
-		Cyanna.loadCurrentCss = function(url,callback) {
+		Cyanna.loadCurrentCss = function(url, callback) {
 			if(url != undefined) {
 
 				var urls = Url.createNew();
@@ -299,18 +294,19 @@ var Cyanna = {
 						}
 					};
 				}
-				
+
 				css.href = url;
+				var head = document.getElementsByTagName('head').item(0);
 				head.appendChild(css);
 			}
 		};
 
-		Cyanna.loadExtCss = function(url,callback) {
+		Cyanna.loadExtCss = function(url, callback) {
 
 			if(url != undefined) {
 
 				var css = document.createElement('link');
-				
+
 				css.rel = 'stylesheet';
 				css.type = 'text/css';
 
@@ -332,15 +328,162 @@ var Cyanna = {
 						}
 					};
 				}
-				
+
 				css.href = url;
+				var head = document.getElementsByTagName('head').item(0);
 				head.appendChild(css);
 			}
 		};
 
-		Cyanna.loadCssArray = function(cssArray,callback) {
-			
-			
+		Cyanna.loadHtml = function(id, position, url, callback) {
+
+			if(url != undefined) {
+				url = this.root + url;
+
+				if(window.XMLHttpRequest) {
+					var oAjax = new XMLHttpRequest();
+				} else {
+					var oAjax = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+
+				oAjax.open('GET', url, true);
+
+				oAjax.send();
+				if(oAjax.readyState) {
+					oAjax.onreadystatechange = function() {
+						if(oAjax.readyState == 4) {
+							if(oAjax.status == 200) {
+					
+								document.getElementById(id).insertAdjacentHTML(position, oAjax.responseText);
+
+								if(typeof callback === "function") {
+
+									callback && callback();
+								}
+							}
+						};
+					};
+				} else {
+					oAjax.onload = function() {
+						alert("onload");
+						document.getElementById(id).insertAdjacentHTML(position, oAjax.responseText);
+						if(typeof callback === "function") {
+
+							callback && callback();
+						}
+					};
+				}
+
+			}
+		};
+
+		Cyanna.loadCurrentHtml = function(id, position, url, callback) {
+			if(url != undefined) {
+
+				var urls = Url.createNew();
+				url = urls.protocol() + '//' + urls.path() + url;
+
+				if(window.XMLHttpRequest) {
+					var oAjax = new XMLHttpRequest();
+				} else {
+					var oAjax = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+
+				oAjax.open('GET', url, true);
+
+				oAjax.send();
+
+				oAjax.onreadystatechange = function() {
+					if(oAjax.readyState == 4) {
+						if(oAjax.status == 200) {
+							document.getElementById(id).insertAdjacentHTML(position, oAjax.responseText);
+							if(typeof callback === "function") {
+								callback && callback();
+							}
+						}
+					};
+				};
+			}
+		};
+
+		Cyanna.loadExtHtml = function(id, position, url, callback) {
+			if(url != undefined) {
+
+				if(window.XMLHttpRequest) {
+					var oAjax = new XMLHttpRequest();
+				} else {
+					var oAjax = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+
+				oAjax.open('GET', url, true);
+
+				oAjax.send();
+
+				oAjax.onreadystatechange = function() {
+
+					if(oAjax.readyState == 4) {
+
+						if(oAjax.status == 200) {
+
+							document.getElementById(id).insertAdjacentHTML(position, oAjax.responseText);
+							if(typeof callback === "function") {
+								callback && callback();
+							}
+						}
+					};
+				};
+			}
+		};
+
+		Cyanna.loadCmpt = function(id, position, url, callback) {
+
+			var self = this;
+			var jsUrl = url.substring(0, url.lastIndexOf(".")) + ".js";
+
+			this.loadHtml(id, position, url, function() {
+
+				self.loadJs(jsUrl, function() {
+					if(typeof callback === "function") {
+						callback && callback();
+					}
+				})
+			});
+
+		};
+
+		Cyanna.loadCurrentCmpt = function(id, position, url, callback) {
+
+			var self = this;
+			var jsUrl = url.substring(0, url.lastIndexOf(".")) + ".js";
+
+			this.loadCurrentHtml(id, position, url, function() {
+
+				self.loadCurrentJs(jsUrl, function() {
+					if(typeof callback === "function") {
+						callback && callback();
+					}
+				})
+			});
+
+		};
+
+		Cyanna.loadExtCmpt = function(id, position, url, callback) {
+
+			var self = this;
+			var jsUrl = url.substring(0, url.lastIndexOf(".")) + ".js";
+
+			this.loadExtHtml(id, position, url, function() {
+
+				self.loadExtJs(jsUrl, function() {
+					if(typeof callback === "function") {
+						callback && callback();
+					}
+				})
+			});
+
+		};
+
+		Cyanna.loadCssArray = function(cssArray, callback) {
 
 			function cssRecurse(self, count, callback) {
 
@@ -357,9 +500,7 @@ var Cyanna = {
 
 		};
 
-		Cyanna.loadExtCssArray = function(cssArray,callback) {
-			
-
+		Cyanna.loadExtCssArray = function(cssArray, callback) {
 
 			function cssRecurse(self, count, callback) {
 
@@ -383,7 +524,7 @@ var Cyanna = {
 				if(count == jsArray.length) {
 					callback && callback();
 				} else {
-					self.loadScript(jsArray[count], function() {
+					self.loadJs(jsArray[count], function() {
 						scriptRecurse(self, ++count, callback);
 					});
 				}
@@ -400,7 +541,7 @@ var Cyanna = {
 				if(count == jsArray.length) {
 					callback && callback();
 				} else {
-					self.loadExtScript(jsArray[count], function() {
+					self.loadExtJs(jsArray[count], function() {
 						scriptRecurse(self, ++count, callback);
 					});
 				}
@@ -414,7 +555,8 @@ var Cyanna = {
 
 }
 var CYANNA = Cyanna.createNew();
-CYANNA.setRoot("http://127.0.0.1:8020/OpenIOE官网/OpenIOE/service/");
+
+CYANNA.setRoot("http://127.0.0.1:8020/OpenIOE-Cyanna-Web-Frame/");
 
 CYANNA.loadJsArray(["Cyanna/Config.js", "Cyanna/Plug/Url/Url.js"], function() {
 
@@ -432,21 +574,22 @@ CYANNA.loadJsArray(["Cyanna/Config.js", "Cyanna/Plug/Url/Url.js"], function() {
 	CYANNA.setSameCssState(config.loadSameCssState);
 	CYANNA.setLogState(config.logState);
 
-
 	if(config.loadSameCssState == true) {
 		cssExtArray.push(urls.protocol() + '//' + urls.path() + urls.nameNoSuffix() + '.css');
 	}
-	
+
 	if(config.loadSameJsState == true) {
 		jsExtArray.push(urls.protocol() + '//' + urls.path() + urls.nameNoSuffix() + '.js');
 	}
 
-
-	CYANNA.loadCssArray(cssArray);
-	CYANNA.loadJsArray(jsArray);
-	CYANNA.loadExtCssArray(cssExtArray);
-	CYANNA.loadExtJsArray(jsExtArray, function() {
-		CYANNA.setReadyState(true);
+	CYANNA.loadCssArray(cssArray, function() {
+		CYANNA.loadExtCssArray(cssExtArray, function() {
+			CYANNA.loadJsArray(jsArray, function() {
+				CYANNA.loadExtJsArray(jsExtArray, function() {
+					CYANNA.setReadyState(true);
+				});
+			});
+		});
 	});
 
 })
