@@ -9,19 +9,19 @@ var Config = {
 		Config.loadSameCssState = false;
 
 		Config.globalCss = [
-			"index.css"
+
 		];
 
 		Config.globalExtCss = [
-			"http://www.celerstar.com/static/uikit-doc/vendor/highlight/highlight.css"
+
 		];
 
 		Config.globalJs = [
-			"test.js"
+			"jquery-2.1.0.js"
 		];
 
 		Config.globalExtJs = [
-			"http://www.celerstar.com/static/jquery/jquery-3.1.0.min.js"
+
 		];
 
 		Config.setRoot = function(root) {

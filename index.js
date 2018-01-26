@@ -1,13 +1,11 @@
 CYANNA.ready(function() {
 
-	// CYANNA.loadCurrentCss("index.css");
-	// CYANNA.loadCurrentScript("test.js");
-
-	// CYANNA.loadExtCss("http://www.celerstar.com/static/uikit-doc/vendor/highlight/highlight.css");
-	// CYANNA.loadExtScript("http://www.celerstar.com/static/jquery/jquery-3.1.0.min.js");
-
 	CYANNA.log("Page/index.js");
 
+	//CYANNA.loadCmpt("cmpt-test", "beforeend", "cmpt-test.html", function() {});
+	//CYANNA.loadCurrentCmpt("cmpt-test", "beforeend", "cmpt-test.html", function() {});
+    CYANNA.loadExtCmpt("cmpt-test", "beforeend", "http://127.0.0.1:8020/OpenIOE-Cyanna-Web-Frame/cmpt-test.html", function() {});
+    
 	CYANNA.routes({
 		route: {
 			"LINK": "Machine",

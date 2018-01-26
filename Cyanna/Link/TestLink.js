@@ -9,7 +9,7 @@ var TestLink = {　　　　
 	createNew: function() {　　　　　　
 		var TestLink = {};　　　　　　
 		TestLink.index = function(params) {
-			CYANNA.warn("Machine.index");
+			CYANNA.warn("TestLink.index");
 		}
 
 		TestLink.ent = function(params) {
@@ -31,8 +31,8 @@ var TestLink = {　　　　
 		TestLink.inq = function(params) {
 
 
-			params.success(params.data);//成功返回
-			//params.error("ddd");//失败返回
+			params.success(params.data);
+			//params.error("ddd");
 		}
 
 		TestLink.rev = function(params) {

@@ -7,6 +7,9 @@ var Cyanna = {
 		Cyanna.loadSameJsState = true;
 		Cyanna.loadSameCssState = true;
 
+		Cyanna.jsLoadedArray = {};
+		Cyanna.cssLoadedArray = {};
+
 		Cyanna.setRoot = function(root) {
 			this.root = root;
 		};
@@ -96,6 +99,37 @@ var Cyanna = {
 			this.logState = state;
 		};
 
+		Cyanna.loadHref = function(url, mode) {
+			url = this.root + url;
+			switch(mode) {
+				case "current":
+					window.location.href = url;
+					break;
+				case "new":
+					window.open(url);
+					break;
+				default:
+					window.location.href = url;
+					break;
+			}
+
+		}
+
+		Cyanna.loadExtHref = function(url, mode) {
+			switch(mode) {
+				case "current":
+					window.location.href = url;
+					break;
+				case "new":
+					window.open(url);
+					break;
+				default:
+					window.location.href = url;
+					break;
+			}
+
+		}
+
 		Cyanna.logState = true;
 
 		Cyanna.log = function(obj) {
@@ -139,28 +173,40 @@ var Cyanna = {
 			if(url != undefined) {
 				url = this.root + url;
 
-				var script = document.createElement("script");
-				script.type = "text/javascript";
+				if(document.getElementById(url)) {
+					this.warn("Load SameName Object:" + url);
+					if(typeof callback === "function") {
+						callback && callback();
+					}
+				} else {
 
-				if(script.readyState) {
-					script.onreadystatechange = function() {
-						if(script.readyState == "loaded" || script.readyState == "complete") {
-							script.onreadystatechange = null;
+					var script = document.createElement("script");
+					script.type = "text/javascript";
+
+					if(script.readyState) {
+						script.onreadystatechange = function() {
+							if(script.readyState == "loaded" || script.readyState == "complete") {
+								script.id = url;
+								script.onreadystatechange = null;
+								if(typeof callback === "function") {
+									callback && callback();
+								}
+							}
+						};
+					} else {
+						script.onload = function() {
+							script.id = url;
 							if(typeof callback === "function") {
 								callback && callback();
 							}
-						}
-					};
-				} else {
-					script.onload = function() {
-						if(typeof callback === "function") {
-							callback && callback();
-						}
-					};
+						};
 
+					}
+					script.src = url;
+
+					document.body.appendChild(script);
 				}
-				script.src = url;
-				document.body.appendChild(script);
+
 			}
 		};
 
@@ -171,27 +217,39 @@ var Cyanna = {
 				var nowUrl = urls.protocol() + '//' + urls.path() + urls.nameNoSuffix() + '.js'
 				url = urls.protocol() + '//' + urls.path() + url;
 
-				if(url == nowUrl && this.loadSameJsState) {
-					this.warn("Reload currentJs file.");
-					return;
-				}
-				var script = document.createElement("script");
-				script.type = "text/javascript";
-
-				if(script.readyState) {
-					script.onreadystatechange = function() {
-						if(script.readyState == "loaded" || script.readyState == "complete") {
-							script.onreadystatechange = null;
-							callback && callback();
-						}
-					};
-				} else {
-					script.onload = function() {
+				if(document.getElementById(url)) {
+					this.warn("Load SameName Object:" + url);
+					if(typeof callback === "function") {
 						callback && callback();
-					};
+					}
+				} else {
+
+					if(url == nowUrl && this.loadSameJsState) {
+						this.warn("Reload currentJs file.");
+						return;
+					}
+					var script = document.createElement("script");
+					script.type = "text/javascript";
+
+					if(script.readyState) {
+						script.onreadystatechange = function() {
+							if(script.readyState == "loaded" || script.readyState == "complete") {
+								script.id = url;
+								script.onreadystatechange = null;
+								callback && callback();
+							}
+						};
+					} else {
+						script.onload = function() {
+							script.id = url;
+							callback && callback();
+						};
+					}
+					script.src = url;
+
+					document.body.appendChild(script);
 				}
-				script.src = url;
-				document.body.appendChild(script);
+
 			}
 
 		};
@@ -200,30 +258,41 @@ var Cyanna = {
 
 			if(url != undefined) {
 
-				var script = document.createElement("script");
-				script.type = "text/javascript";
+				if(document.getElementById(url)) {
+					this.warn("Load SameName Object:" + url);
+					if(typeof callback === "function") {
+						callback && callback();
+					}
+				} else {
 
-				if(script.readyState) {
-					script.onreadystatechange = function() {
-						if(script.readyState == "loaded" || script.readyState == "complete") {
-							script.onreadystatechange = null;
+					var script = document.createElement("script");
+					script.type = "text/javascript";
 
+					if(script.readyState) {
+						script.onreadystatechange = function() {
+							if(script.readyState == "loaded" || script.readyState == "complete") {
+								script.id = url;
+								script.onreadystatechange = null;
+
+								if(typeof callback === "function") {
+									callback && callback();
+								}
+
+							}
+						};
+					} else {
+						script.onload = function() {
+							script.id = url;
 							if(typeof callback === "function") {
 								callback && callback();
 							}
+						};
 
-						}
-					};
-				} else {
-					script.onload = function() {
-						if(typeof callback === "function") {
-							callback && callback();
-						}
-					};
+					}
+					script.src = url;
 
+					document.body.appendChild(script);
 				}
-				script.src = url;
-				document.body.appendChild(script);
 
 			}
 
@@ -234,30 +303,42 @@ var Cyanna = {
 			if(url != undefined) {
 				url = this.root + url;
 
-				css = document.createElement('link');
-				css.type = 'text/css';
-				css.rel = 'stylesheet';
+				if(document.getElementById(url)) {
+					this.warn("Load SameName Object:" + url);
+					if(typeof callback === "function") {
+						callback && callback();
+					}
+				} else {
 
-				if(css.readyState) {
-					css.onreadystatechange = function() {
-						if(css.readyState == "loaded" || css.readyState == "complete") {
-							css.onreadystatechange = null;
+					css = document.createElement('link');
+					css.type = 'text/css';
+					css.rel = 'stylesheet';
+
+					if(css.readyState) {
+						css.onreadystatechange = function() {
+							if(css.readyState == "loaded" || css.readyState == "complete") {
+								css.id = url;
+								css.onreadystatechange = null;
+								if(typeof callback === "function") {
+									callback && callback();
+								}
+							}
+						};
+					} else {
+						css.onload = function() {
+							css.id = url;
 							if(typeof callback === "function") {
 								callback && callback();
 							}
-						}
-					};
-				} else {
-					css.onload = function() {
-						if(typeof callback === "function") {
-							callback && callback();
-						}
-					};
+						};
+					}
+
+					css.href = url;
+
+					var head = document.getElementsByTagName('head').item(0);
+					head.appendChild(css);
 				}
 
-				css.href = url;
-				var head = document.getElementsByTagName('head').item(0);
-				head.appendChild(css);
 			}
 		};
 
@@ -268,70 +349,94 @@ var Cyanna = {
 				var nowUrl = urls.protocol() + '//' + urls.path() + urls.nameNoSuffix() + '.css'
 				url = urls.protocol() + '//' + urls.path() + url;
 
-				if(url == nowUrl && this.loadSameCssState) {
+				if(document.getElementById(url)) {
+					this.warn("Load SameName Object:" + url);
+					if(typeof callback === "function") {
+						callback && callback();
+					}
+				} else {
 
-					this.warn("Reload currentCss file");
-					return;
-				}
+					if(url == nowUrl && this.loadSameCssState) {
 
-				css = document.createElement('link');
-				css.type = 'text/css';
-				css.rel = 'stylesheet';
+						this.warn("Reload currentCss file");
+						return;
+					}
 
-				if(css.readyState) {
-					css.onreadystatechange = function() {
-						if(css.readyState == "loaded" || css.readyState == "complete") {
-							css.onreadystatechange = null;
+					css = document.createElement('link');
+					css.type = 'text/css';
+					css.rel = 'stylesheet';
+
+					if(css.readyState) {
+						css.onreadystatechange = function() {
+							if(css.readyState == "loaded" || css.readyState == "complete") {
+								css.id = url;
+								css.onreadystatechange = null;
+								if(typeof callback === "function") {
+									callback && callback();
+								}
+							}
+						};
+					} else {
+						css.onload = function() {
+							css.id = url;
 							if(typeof callback === "function") {
 								callback && callback();
 							}
-						}
-					};
-				} else {
-					css.onload = function() {
-						if(typeof callback === "function") {
-							callback && callback();
-						}
-					};
+						};
+					}
+
+					css.href = url;
+
+					var head = document.getElementsByTagName('head').item(0);
+					head.appendChild(css);
+
 				}
 
-				css.href = url;
-				var head = document.getElementsByTagName('head').item(0);
-				head.appendChild(css);
 			}
 		};
 
 		Cyanna.loadExtCss = function(url, callback) {
 
 			if(url != undefined) {
+				if(document.getElementById(url)) {
+					this.warn("Load SameName Object:" + url);
+					if(typeof callback === "function") {
+						callback && callback();
+					}
+				} else {
 
-				var css = document.createElement('link');
+					var css = document.createElement('link');
 
-				css.rel = 'stylesheet';
-				css.type = 'text/css';
+					css.rel = 'stylesheet';
+					css.type = 'text/css';
 
-				if(css.readyState) {
-					css.onreadystatechange = function() {
-						if(css.readyState == "loaded" || css.readyState == "complete") {
-							css.onreadystatechange = null;
+					if(css.readyState) {
+						css.onreadystatechange = function() {
+							if(css.readyState == "loaded" || css.readyState == "complete") {
+								css.id = url;
+								css.onreadystatechange = null;
 
+								if(typeof callback === "function") {
+									callback && callback();
+								}
+
+							}
+						};
+					} else {
+						css.onload = function() {
+							css.id = url;
 							if(typeof callback === "function") {
 								callback && callback();
 							}
+						};
+					}
 
-						}
-					};
-				} else {
-					css.onload = function() {
-						if(typeof callback === "function") {
-							callback && callback();
-						}
-					};
+					css.href = url;
+
+					var head = document.getElementsByTagName('head').item(0);
+					head.appendChild(css);
 				}
 
-				css.href = url;
-				var head = document.getElementsByTagName('head').item(0);
-				head.appendChild(css);
 			}
 		};
 
@@ -353,7 +458,7 @@ var Cyanna = {
 					oAjax.onreadystatechange = function() {
 						if(oAjax.readyState == 4) {
 							if(oAjax.status == 200) {
-					
+
 								document.getElementById(id).insertAdjacentHTML(position, oAjax.responseText);
 
 								if(typeof callback === "function") {
@@ -579,7 +684,13 @@ CYANNA.loadJsArray(["Cyanna/Config.js", "Cyanna/Plug/Url/Url.js"], function() {
 	}
 
 	if(config.loadSameJsState == true) {
-		jsExtArray.push(urls.protocol() + '//' + urls.path() + urls.nameNoSuffix() + '.js');
+
+		if(urls.nameNoSuffix() == "") {
+			jsExtArray.push(urls.protocol() + '//' + urls.path() + "index" + '.js');
+		} else {
+			jsExtArray.push(urls.protocol() + '//' + urls.path() + urls.nameNoSuffix() + '.js');
+		}
+
 	}
 
 	CYANNA.loadCssArray(cssArray, function() {

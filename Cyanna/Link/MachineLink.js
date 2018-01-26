@@ -9,14 +9,16 @@ var MachineLink = {　　　　
 	createNew: function() {　　　　　　
 		var Machine = {};　　　　　　
 
+
+
+		Machine.index = function(params) {
+			CYANNA.warn("MachineLink.index");
+		}
+
 		Machine.ent = function(params) {
 
 		}
-
-		Machine.index = function(params) {
-			CYANNA.warn("Machine.index");
-		}
-
+		
 		Machine.exi = function(params) {
 
 		}
@@ -72,7 +74,7 @@ var MachineLink = {　　　　
 					break;
 				default:
 					{
-						alert(params.data.ISTR);
+						
 					}
 					break;
 			}
