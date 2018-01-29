@@ -23,7 +23,11 @@ var Config = {
 		Config.globalExtJs = [
 
 		];
-
+		Config.version = "01300238";
+		
+		Config.cache = true;
+		
+		
 		Config.setRoot = function(root) {
 			this.root = root;
 		};
@@ -31,3 +35,4 @@ var Config = {
 		return Config;
 	}
 }
+

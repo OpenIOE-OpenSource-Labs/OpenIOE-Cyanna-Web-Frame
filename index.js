@@ -4,8 +4,8 @@ CYANNA.ready(function() {
 
 	//CYANNA.loadCmpt("cmpt-test", "beforeend", "cmpt-test.html", function() {});
 	//CYANNA.loadCurrentCmpt("cmpt-test", "beforeend", "cmpt-test.html", function() {});
-    CYANNA.loadExtCmpt("cmpt-test", "beforeend", "http://127.0.0.1:8020/OpenIOE-Cyanna-Web-Frame/cmpt-test.html", function() {});
-    
+	CYANNA.loadCmpt(["cmpt-test", "beforeend", "cmpt-test.html"], function() {});
+
 	CYANNA.routes({
 		route: {
 			"LINK": "Machine",

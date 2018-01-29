@@ -10,8 +10,59 @@ var Cyanna = {
 		Cyanna.jsLoadedArray = {};
 		Cyanna.cssLoadedArray = {};
 
+		Cyanna.globalCss = [];
+		Cyanna.globalExtCss = [];
+
+		Cyanna.globalJs = [];
+		Cyanna.globalExtJs = [];
+
+		Cyanna.setGlobalCss = function(globalCss) {
+			this.globalCss = globalCss;
+		};
+		Cyanna.setGlobalExtCss = function(globalExtCss) {
+			this.globalExtCss = globalExtCss;
+		};
+		Cyanna.setGlobalJs = function(globalJs) {
+			this.globalJs = globalJs;
+		};
+		Cyanna.setGlobalExtJs = function(globalExtJs) {
+			this.globalExtJs = globalExtJs;
+		};
+
 		Cyanna.setRoot = function(root) {
 			this.root = root;
+		};
+
+		Cyanna.loadResource = function(callback) {
+			self = this;
+			self.loadCssArray(self.globalCss, function() {
+				self.loadExtCssArray(self.globalExtCss, function() {
+					self.loadJsArray(self.globalJs, function() {
+						self.loadExtJsArray(self.globalExtJs, function() {
+							callback && callback();
+						});
+					});
+				});
+			});
+		};
+
+		Cyanna.version = "";
+		Cyanna.cacheVersion = "";
+		Cyanna.cacheTimestamp = "";
+
+		Cyanna.setVersion = function(version) {
+			this.version = version;
+			this.cacheVersion = "?version=" + version;
+		};
+
+		Cyanna.setTimestamp = function(timestamp) {
+			this.cacheTimestamp = "&timestamp=" + timestamp;
+		}
+
+		Cyanna.resourcetimeStamp = "";
+		Cyanna.getDate = function() {
+			var dt = new Date();
+			return String(dt.getFullYear()) + String((dt.getMonth() + 1)) + String(dt.getDate()) + String(dt.getHours()) + String(dt.getMinutes()) + String(dt.getSeconds());
 		};
 
 		Cyanna.readyEvent;
@@ -23,6 +74,21 @@ var Cyanna = {
 			}
 
 			this.readyStates = state;
+		};
+
+		Cyanna.getRequest = function request(paras) {
+			var url = location.href;
+			var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
+			var paraObj = {}
+			for(i = 0; j = paraString[i]; i++) {
+				paraObj[j.substring(0, j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=") + 1, j.length);
+			}
+			var returnValue = paraObj[paras.toLowerCase()];
+			if(typeof(returnValue) == "undefined") {
+				return "";
+			} else {
+				return returnValue;
+			}
 		};
 
 		Cyanna.routes = function(params) {
@@ -202,7 +268,7 @@ var Cyanna = {
 						};
 
 					}
-					script.src = url;
+					script.src = url + this.cacheVersion + this.cacheTimestamp;
 
 					document.body.appendChild(script);
 				}
@@ -245,7 +311,7 @@ var Cyanna = {
 							callback && callback();
 						};
 					}
-					script.src = url;
+					script.src = url + this.cacheVersion + this.cacheTimestamp;
 
 					document.body.appendChild(script);
 				}
@@ -289,7 +355,7 @@ var Cyanna = {
 						};
 
 					}
-					script.src = url;
+					script.src = url + this.cacheVersion + this.cacheTimestamp;
 
 					document.body.appendChild(script);
 				}
@@ -333,7 +399,7 @@ var Cyanna = {
 						};
 					}
 
-					css.href = url;
+					css.href = url + this.cacheVersion + this.cacheTimestamp;
 
 					var head = document.getElementsByTagName('head').item(0);
 					head.appendChild(css);
@@ -385,7 +451,7 @@ var Cyanna = {
 						};
 					}
 
-					css.href = url;
+					css.href = url + this.cacheVersion + this.cacheTimestamp;
 
 					var head = document.getElementsByTagName('head').item(0);
 					head.appendChild(css);
@@ -431,7 +497,7 @@ var Cyanna = {
 						};
 					}
 
-					css.href = url;
+					css.href = url + this.cacheVersion + this.cacheTimestamp;
 
 					var head = document.getElementsByTagName('head').item(0);
 					head.appendChild(css);
@@ -451,7 +517,7 @@ var Cyanna = {
 					var oAjax = new ActiveXObject("Microsoft.XMLHTTP");
 				}
 
-				oAjax.open('GET', url, true);
+				oAjax.open('GET', url + this.cacheVersion + this.cacheTimestamp, true);
 
 				oAjax.send();
 				if(oAjax.readyState) {
@@ -494,7 +560,7 @@ var Cyanna = {
 					var oAjax = new ActiveXObject("Microsoft.XMLHTTP");
 				}
 
-				oAjax.open('GET', url, true);
+				oAjax.open('GET', url + this.cacheVersion + this.cacheTimestamp, true);
 
 				oAjax.send();
 
@@ -520,7 +586,7 @@ var Cyanna = {
 					var oAjax = new ActiveXObject("Microsoft.XMLHTTP");
 				}
 
-				oAjax.open('GET', url, true);
+				oAjax.open('GET', url + this.cacheVersion + this.cacheTimestamp, true);
 
 				oAjax.send();
 
@@ -540,7 +606,11 @@ var Cyanna = {
 			}
 		};
 
-		Cyanna.loadCmpt = function(id, position, url, callback) {
+		Cyanna.loadCmpt = function(cmptInfo, callback) {
+
+			id = cmptInfo[0];
+			position = cmptInfo[1];
+			url = cmptInfo[2];
 
 			var self = this;
 			var jsUrl = url.substring(0, url.lastIndexOf(".")) + ".js";
@@ -556,7 +626,11 @@ var Cyanna = {
 
 		};
 
-		Cyanna.loadCurrentCmpt = function(id, position, url, callback) {
+		Cyanna.loadCurrentCmpt = function(cmptInfo, callback) {
+
+			id = cmptInfo[0];
+			position = cmptInfo[1];
+			url = cmptInfo[2];
 
 			var self = this;
 			var jsUrl = url.substring(0, url.lastIndexOf(".")) + ".js";
@@ -572,7 +646,11 @@ var Cyanna = {
 
 		};
 
-		Cyanna.loadExtCmpt = function(id, position, url, callback) {
+		Cyanna.loadExtCmpt = function(cmptInfo, callback) {
+
+			id = cmptInfo[0];
+			position = cmptInfo[1];
+			url = cmptInfo[2];
 
 			var self = this;
 			var jsUrl = url.substring(0, url.lastIndexOf(".")) + ".js";
@@ -655,6 +733,24 @@ var Cyanna = {
 			scriptRecurse(this, 0, callback);
 
 		};
+
+		Cyanna.loadCmptArray = function(cmptArray, callback) {
+
+			function cmptRecurse(self, count, callback) {
+
+				if(count == cmptArray.length) {
+					callback && callback();
+				} else {
+					self.loadCmpt(cmptArray[count], function() {
+						cmptRecurse(self, ++count, callback);
+					});
+				}
+			}
+
+			cmptRecurse(this, 0, callback);
+
+		};
+
 		return Cyanna;
 	}
 
@@ -663,7 +759,7 @@ var CYANNA = Cyanna.createNew();
 
 CYANNA.setRoot("http://127.0.0.1:8020/OpenIOE-Cyanna-Web-Frame/");
 
-CYANNA.loadJsArray(["Cyanna/Config.js", "Cyanna/Plug/Url/Url.js"], function() {
+CYANNA.loadJsArray(["Cyanna/Config.js?timestamp=" + CYANNA.getDate(), "Cyanna/Plug/Url/Url.js"], function() {
 
 	var config = Config.createNew();
 	config.setRoot(CYANNA.root);
@@ -678,6 +774,11 @@ CYANNA.loadJsArray(["Cyanna/Config.js", "Cyanna/Plug/Url/Url.js"], function() {
 	CYANNA.setSameJsState(config.loadSameJsState);
 	CYANNA.setSameCssState(config.loadSameCssState);
 	CYANNA.setLogState(config.logState);
+	CYANNA.setVersion(config.version);
+
+	if(!config.cache) {
+		CYANNA.setTimestamp(CYANNA.getDate());
+	}
 
 	if(config.loadSameCssState == true) {
 		cssExtArray.push(urls.protocol() + '//' + urls.path() + urls.nameNoSuffix() + '.css');
@@ -693,6 +794,25 @@ CYANNA.loadJsArray(["Cyanna/Config.js", "Cyanna/Plug/Url/Url.js"], function() {
 
 	}
 
+	Cyanna.setGlobalCss = function(globalCss) {
+		this.globalCss = globalCss;
+	};
+	Cyanna.setGlobalExtCss = function(globalExtCss) {
+		this.globalExtCss = globalExtCss;
+	};
+	Cyanna.setGlobalJs = function(globalJs) {
+		this.globalJs = globalJs;
+	};
+	Cyanna.setGlobalExtJs = function(globalExtJs) {
+		this.globalExtJs = globalExtJs;
+	};
+
+	CYANNA.setGlobalCss(cssArray);
+	CYANNA.setGlobalExtCss(cssExtArray);
+	CYANNA.setGlobalJs(jsArray);
+	CYANNA.setGlobalExtJs(jsExtArray);
+
+    //CYANNA.loadResource(function(){})
 	CYANNA.loadCssArray(cssArray, function() {
 		CYANNA.loadExtCssArray(cssExtArray, function() {
 			CYANNA.loadJsArray(jsArray, function() {
